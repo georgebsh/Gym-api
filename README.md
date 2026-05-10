@@ -10,6 +10,10 @@ A RESTful backend for managing personal gym workouts and weekly training schedul
 - Docker / Docker Compose
 - Deployed on Railway
 
+## Live API Docs
+
+Once running, visit **`http://localhost:8080/swagger-ui.html`** to explore and test all endpoints interactively in your browser. Register, grab the JWT token, click **Authorize**, and try any endpoint live.
+
 ## Getting Started
 
 ### Run with Docker
@@ -136,6 +140,7 @@ Plan your gym week by day. Set your gym time, muscle group focus, and a list of 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/api/schedule` | Get your full weekly plan |
+| GET | `/api/schedule/suggestions` | Get exercises for unscheduled muscle groups |
 | GET | `/api/schedule/{day}` | Get plan for a specific day |
 | POST | `/api/schedule` | Create or update a day's plan |
 | POST | `/api/schedule/{day}/exercises` | Add an exercise to a day |
@@ -143,6 +148,29 @@ Plan your gym week by day. Set your gym time, muscle group focus, and a list of 
 | DELETE | `/api/schedule/{day}` | Clear an entire day's plan |
 
 `{day}` must be one of: `MONDAY`, `TUESDAY`, `WEDNESDAY`, `THURSDAY`, `FRIDAY`, `SATURDAY`, `SUNDAY`
+
+### Get exercise suggestions
+
+Returns exercises grouped by muscle groups you haven't scheduled yet this week — so if you've planned Chest and Back, it shows everything else (Legs, Shoulders, Arms, etc.) with exercises for each.
+
+```
+GET /api/schedule/suggestions
+```
+```json
+[
+  {
+    "muscleGroup": "Legs",
+    "exercises": [
+      { "id": 5, "name": "Squat", "bodyPart": "Legs", "targetArea": "Quads", "description": "..." },
+      { "id": 6, "name": "Romanian Deadlift", "bodyPart": "Legs", "targetArea": "Hamstrings", "description": "..." }
+    ]
+  },
+  {
+    "muscleGroup": "Shoulders",
+    "exercises": [...]
+  }
+]
+```
 
 ### Set up a day
 

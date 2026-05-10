@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.MuscleGroupSuggestion;
 import com.example.demo.dto.ScheduleEntryRequest;
 import com.example.demo.dto.ScheduleRequest;
 import com.example.demo.model.WorkoutSchedule;
@@ -24,6 +25,11 @@ public class WorkoutScheduleController {
     @GetMapping
     public List<WorkoutSchedule> getFullSchedule(Principal principal) {
         return scheduleService.getFullSchedule(principal.getName());
+    }
+
+    @GetMapping("/suggestions")
+    public List<MuscleGroupSuggestion> getSuggestions(Principal principal) {
+        return scheduleService.getSuggestions(principal.getName());
     }
 
     @GetMapping("/{day}")

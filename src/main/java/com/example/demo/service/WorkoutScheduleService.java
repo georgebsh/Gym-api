@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.MuscleGroupSuggestion;
 import com.example.demo.dto.ScheduleEntryRequest;
 import com.example.demo.dto.ScheduleRequest;
 import com.example.demo.model.Exercise;
@@ -16,6 +17,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.DayOfWeek;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class WorkoutScheduleService {
@@ -109,6 +113,23 @@ public class WorkoutScheduleService {
         }
 
         scheduleRepo.delete(schedule);
+    }
+
+    public List<MuscleGroupSuggestion> getSuggestions(String username) {
+        Set<String> scheduledGroups = scheduleRepo.findByUserUsername(username).stream()
+                .map(s -> s.getMuscleGroup() != null ? s.getMuscleGroup().toLowerCase() : "")
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toSet());
+
+        Map<String, List<Exercise>> byBodyPart = exerciseRepo.findAll().stream()
+                .collect(Collectors.groupingBy(e -> e.getBodyPart().toLowerCase()));
+
+        return byBodyPart.entrySet().stream()
+                .filter(entry -> !scheduledGroups.contains(entry.getKey()))
+                .map(entry -> new MuscleGroupSuggestion(
+                        entry.getValue().get(0).getBodyPart(),
+                        entry.getValue()))
+                .collect(Collectors.toList());
     }
 
     private DayOfWeek parseDayOfWeek(String day) {
