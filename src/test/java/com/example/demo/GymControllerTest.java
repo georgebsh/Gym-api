@@ -32,8 +32,6 @@ class GymControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // ── Exercise endpoint tests (public) ────────────────────────────────────
-
     @Test
     void getAllExercises_returnsSeededData() throws Exception {
         mockMvc.perform(get("/exercises"))
@@ -71,8 +69,6 @@ class GymControllerTest {
         mockMvc.perform(delete("/exercises/99999"))
                 .andExpect(status().isNotFound());
     }
-
-    // ── Auth tests ───────────────────────────────────────────────────────────
 
     @Test
     void register_returnsJwtToken() throws Exception {
@@ -120,8 +116,6 @@ class GymControllerTest {
                 .andExpect(jsonPath("$.token").exists());
     }
 
-    // ── Workout tests (require JWT) ──────────────────────────────────────────
-
     private String registerAndGetToken(String username) throws Exception {
         String json = String.format(
                 "{\"username\":\"%s\",\"email\":\"%s@test.com\",\"password\":\"password123\"}",
@@ -159,7 +153,6 @@ class GymControllerTest {
     void addEntryToWorkout_returnsEntryWithExerciseDetails() throws Exception {
         String token = registerAndGetToken("entryuser1");
 
-        // create a workout
         String workoutJson = """
                 {"name":"Leg Day","date":"2024-01-16","notes":""}
                 """;
@@ -171,7 +164,6 @@ class GymControllerTest {
         Long workoutId = objectMapper.readTree(workoutResult.getResponse().getContentAsString())
                 .get("id").asLong();
 
-        // get a real exercise id from the seeded data
         Long exerciseId = exerciseRepository.findAll().get(0).getId();
 
         String entryJson = String.format(
